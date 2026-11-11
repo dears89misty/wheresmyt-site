@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robotaxi Companion</title>
+<style>
+  :root { --bg:#fff; --fg:#1c1c1e; --muted:#6b6b70; --card:#f3f3f5; --line:#d9d9de; --accent:#0a66d9; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#eee; --muted:#9a9aa0; --card:#1c1c1f; --line:#333; --accent:#8ab4ff; } }
+  * { box-sizing: border-box; }
+  body { font: 16px/1.5 -apple-system, system-ui, Segoe UI, Roboto, sans-serif; max-width: 42rem; margin: 0 auto; padding: 1rem; background: var(--bg); color: var(--fg); }
+  h1 { font-size: 1.6rem; margin: .5rem 0 0; } h2 { font-size: 1.1rem; margin: 0 0 .6rem; }
+  a { color: var(--accent); }
+  .sub { color: var(--muted); font-size: .9rem; margin: .2rem 0 1rem; }
+  nav { display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  nav button { flex: 1; }
+  button, input, select { font: inherit; color: inherit; }
+  button { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .8rem; cursor: pointer; }
+  button.on, button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.danger { color: #d93025; }
+  input, select { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .6rem; width: 100%; }
+  label { display: block; font-size: .85rem; color: var(--muted); }
+  .card { background: var(--card); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .grid .full { grid-column: 1 / -1; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .6rem; }
+  .stat b { display: block; font-size: 1.4rem; } .stat span { color: var(--muted); font-size: .8rem; }
+  .ride { border-top: 1px solid var(--line); padding: .6rem 0; display: flex; justify-content: space-between; gap: .5rem; }
+  .ride:first-child { border-top: 0; }
+  .ride small { color: var(--muted); display: block; }
+  .check { display: flex; gap: .6rem; align-items: center; padding: .35rem 0; } .check input { width: auto; }
+  .hide { display: none; }
+  footer { color: var(--muted); font-size: .8rem; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<h1>Robotaxi Companion</h1>
+<p class="sub">Log your rides, estimate fares and run a pre-ride checklist. Everything stays on this device.</p>
+
+<nav id="tabs">
+  <button data-t="log" class="on">Rides</button>
+  <button data-t="fare">Fare estimator</button>
+  <button data-t="list">Checklist</button>
+</nav>
+
+<section id="log">
+  <div class="card"><div class="stats" id="stats"></div></div>
+  <form class="card" id="rideForm">
+    <h2>Log a ride</h2>
+    <div class="grid">
+      <div><label for="date">Date</label><input type="date" id="date" required></div>
+      <div><label for="city">City / area</label><input id="city" placeholder="e.g. Austin"></div>
+      <div class="full"><label for="route">Pickup → drop-off</label><input id="route" placeholder="Optional"></div>
+      <div><label for="miles">Miles</label><input type="number" id="miles" min="0" step="0.1" required></div>
+      <div><label for="mins">Trip minutes</label><input type="number" id="mins" min="0" step="1" required></div>
+      <div><label for="wait">Wait for pickup (min)</label><input type="number" id="wait" min="0" step="1" value="0"></div>
+      <div><label for="cost">Fare ($)</label><input type="number" id="cost" min="0" step="0.01" required></div>
+      <div class="full"><label for="rating">Rating</label>
+        <select id="rating"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select></div>
+      <div class="full"><label for="note">Notes</label><input id="note" placeholder="Smoothness, interventions, quirks…"></div>
+      <div class="full"><button class="primary" type="submit">Add ride</button></div>
+    </div>
+  </form>
+  <div class="card"><h2>History</h2><div id="rides"></div>
+    <p style="display:flex;gap:.5rem;margin:.8rem 0 0"><button id="export">Export CSV</button><button id="wipe" class="danger">Delete my data</button></p></div>
+</section>
+
+<section id="fare" class="hide">
+  <div class="card">
+    <h2>Fare estimator</h2>
+    <p class="sub">Enter rates you've seen in your own rides. These are not official Tesla prices.</p>
+    <div class="grid">
+      <div><label for="rBase">Base fare ($)</label><input type="number" id="rBase" step="0.01" min="0" value="2.00"></div>
+      <div><label for="rMile">Per mile ($)</label><input type="number" id="rMile" step="0.01" min="0" value="1.00"></div>
+      <div><label for="rMin">Per minute ($)</label><input type="number" id="rMin" step="0.01" min="0" value="0.30"></div>
+      <div><label for="rSurge">Demand multiplier</label><input type="number" id="rSurge" step="0.1" min="1" value="1"></div>
+      <div><label for="eMiles">Trip miles</label><input type="number" id="eMiles" step="0.1" min="0" value="5"></div>
+      <div><label for="eMins">Trip minutes</label><input type="number" id="eMins" step="1" min="0" value="15"></div>
+    </div>
+    <p class="stat" style="margin-top:1rem"><b id="estimate">$0.00</b><span id="estNote"></span></p>
+    <button id="calibrate">Calibrate rates from my ride log</button>
+    <p class="sub" id="calMsg"></p>
+  </div>
+</section>
+
+<section id="list" class="hide">
+  <div class="card">
+    <h2>Pre-ride checklist</h2>
+    <div id="checks"></div>
+    <button id="resetChecks">Reset</button>
+  </div>
+</section>
+
+<footer>An unofficial pastime tool for entertainment only; not affiliated with or endorsed by Tesla, Inc. Data never leaves your device. <a href="../">wheresMyT</a> · <a href="../privacy.html">Privacy</a></footer>
+
+<script>
+(function () {
+  var KEY = 'robotaxi.rides', CK = 'robotaxi.checks', RK = 'robotaxi.rates';
+  function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function money(n) { return '$' + n.toFixed(2); }
+
+  var rides = load(KEY, []);
+  $('date').valueAsDate = new Date();
+
+  // Tabs
+  document.querySelectorAll('#tabs button').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('#tabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      ['log', 'fare', 'list'].forEach(function (t) { $(t).classList.toggle('hide', t !== b.dataset.t); });
+    };
+  });
+
+  // Rides
+  function render() {
+    var n = rides.length, mi = 0, cost = 0, wait = 0, rate = 0;
+    rides.forEach(function (r) { mi += r.miles; cost += r.cost; wait += r.wait; rate += r.rating; });
+    $('stats').innerHTML = [
+      [n, 'rides'], [mi.toFixed(1), 'miles'], [money(cost), 'spent'],
+      [n ? money(cost / n) : '–', 'avg fare'], [n ? (wait / n).toFixed(1) + ' min' : '–', 'avg wait'],
+      [n ? (rate / n).toFixed(1) + ' ★' : '–', 'avg rating']
+    ].map(function (s) { return '<div class="stat"><b>' + s[0] + '</b><span>' + s[1] + '</span></div>'; }).join('');
+    $('rides').innerHTML = n ? rides.slice().sort(function (a, b) { return b.date.localeCompare(a.date); }).map(function (r) {
+      return '<div class="ride"><div>' + esc(r.date) + ' · ' + esc(r.city || 'Ride') + (r.route ? ' — ' + esc(r.route) : '') +
+        '<small>' + r.miles + ' mi · ' + r.mins + ' min · wait ' + r.wait + ' min · ' + '★'.repeat(r.rating) + (r.note ? ' · ' + esc(r.note) : '') + '</small></div>' +
+        '<div><b>' + money(r.cost) + '</b> <button data-id="' + r.id + '" aria-label="Delete ride">✕</button></div></div>';
+    }).join('') : '<p class="sub">No rides yet.</p>';
+    $('rides').querySelectorAll('button[data-id]').forEach(function (b) {
+      b.onclick = function () { rides = rides.filter(function (r) { return String(r.id) !== b.dataset.id; }); save(KEY, rides); render(); };
+    });
+  }
+  $('rideForm').onsubmit = function (e) {
+    e.preventDefault();
+    rides.push({ id: Date.now(), date: $('date').value, city: $('city').value.trim(), route: $('route').value.trim(),
+      miles: +$('miles').value, mins: +$('mins').value, wait: +$('wait').value || 0, cost: +$('cost').value,
+      rating: +$('rating').value, note: $('note').value.trim() });
+    save(KEY, rides); render();
+    ['route', 'miles', 'mins', 'cost', 'note'].forEach(function (i) { $(i).value = ''; });
+  };
+  $('export').onclick = function () {
+    var q = function (v) { v = String(v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+    var rows = [['date','city','route','miles','minutes','wait_min','fare','rating','note']].concat(rides.map(function (r) {
+      return [r.date, r.city, r.route, r.miles, r.mins, r.wait, r.cost, r.rating, r.note]; }));
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows.map(function (r) { return r.map(q).join(','); }).join('\n')], { type: 'text/csv' }));
+    a.download = 'robotaxi-rides.csv'; a.click();
+  };
+  $('wipe').onclick = function () {
+    if (!confirm('Delete all rides, rates and checklist progress from this device?')) return;
+    [KEY, CK, RK].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+    rides = []; render(); loadRates(); drawChecks(); estimate();
+  };
+
+  // Fare estimator
+  var rateIds = ['rBase', 'rMile', 'rMin', 'rSurge'];
+  function loadRates() { var r = load(RK, null); if (r) rateIds.forEach(function (i) { if (r[i] != null) $(i).value = r[i]; }); }
+  function estimate() {
+    var g = function (i) { return Math.max(0, +$(i).value || 0); };
+    var t = (g('rBase') + g('rMile') * g('eMiles') + g('rMin') * g('eMins')) * Math.max(1, g('rSurge'));
+    $('estimate').textContent = money(t);
+    $('estNote').textContent = 'estimated total for ' + g('eMiles') + ' mi / ' + g('eMins') + ' min';
+    var o = {}; rateIds.forEach(function (i) { o[i] = $(i).value; }); save(RK, o);
+  }
+  ['rBase','rMile','rMin','rSurge','eMiles','eMins'].forEach(function (i) { $(i).oninput = estimate; });
+  $('calibrate').onclick = function () {
+    // Least squares: cost = base + a*miles + b*mins
+    if (rides.length < 4) { $('calMsg').textContent = 'Log at least 4 rides first.'; return; }
+    var X = rides.map(function (r) { return [1, r.miles, r.mins, r.cost]; }), A = [[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+    X.forEach(function (x) { for (var i = 0; i < 3; i++) { for (var j = 0; j < 3; j++) A[i][j] += x[i] * x[j]; A[i][3] += x[i] * x[3]; } });
+    for (var c = 0; c < 3; c++) {
+      var p = c; for (var r = c + 1; r < 3; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+      if (Math.abs(A[p][c]) < 1e-9) { $('calMsg').textContent = 'Not enough variety in your rides to fit rates.'; return; }
+      var t = A[c]; A[c] = A[p]; A[p] = t;
+      for (var r2 = 0; r2 < 3; r2++) if (r2 !== c) { var f = A[r2][c] / A[c][c]; for (var k = c; k < 4; k++) A[r2][k] -= f * A[c][k]; }
+    }
+    var base = A[0][3] / A[0][0], mile = A[1][3] / A[1][1], min = A[2][3] / A[2][2];
+    if (mile < 0 || min < 0 || base < 0) { $('calMsg').textContent = 'Fit gave negative rates; log more varied rides.'; return; }
+    $('rBase').value = base.toFixed(2); $('rMile').value = mile.toFixed(2); $('rMin').value = min.toFixed(2); $('rSurge').value = 1;
+    estimate(); $('calMsg').textContent = 'Rates fitted to your ' + rides.length + ' rides.';
+  };
+
+  // Checklist
+  var ITEMS = ['Confirm pickup pin and vehicle details in the ride app', 'Phone charged; screenshot of ride details', 'Know the app\'s support/help option', 'Buckle up and check your belongings on exit',
+    'Check pickup location is safe and legal to stop', 'Note any issues for your ride log'];
+  function drawChecks() {
+    var done = load(CK, {});
+    $('checks').innerHTML = '';
+    ITEMS.forEach(function (t, i) {
+      var l = document.createElement('label'); l.className = 'check'; l.style.color = 'inherit'; l.style.fontSize = 'inherit';
+      var c = document.createElement('input'); c.type = 'checkbox'; c.checked = !!done[i];
+      c.onchange = function () { done[i] = c.checked; save(CK, done); };
+      l.appendChild(c); l.appendChild(document.createTextNode(t)); $('checks').appendChild(l);
+    });
+  }
+  $('resetChecks').onclick = function () { save(CK, {}); drawChecks(); };
+
+  loadRates(); estimate(); drawChecks(); render();
+})();
+</script>
+</body>
+</html>
