@@ -1,0 +1,25 @@
+{
+  "_note": "SAMPLE DATA ONLY: approximate city-level coordinates, not real station records. Replace with the real list (same fields).",
+  "stations": [
+    {"id":"s01","name":"Sample: Kettleman City","city":"Kettleman City","state":"CA","lat":36.01,"lng":-119.96,"stalls":40},
+    {"id":"s02","name":"Sample: Barstow","city":"Barstow","state":"CA","lat":34.9,"lng":-117.02,"stalls":40},
+    {"id":"s03","name":"Sample: Fremont","city":"Fremont","state":"CA","lat":37.49,"lng":-121.94,"stalls":24},
+    {"id":"s04","name":"Sample: Las Vegas","city":"Las Vegas","state":"NV","lat":36.17,"lng":-115.14,"stalls":32},
+    {"id":"s05","name":"Sample: Phoenix","city":"Phoenix","state":"AZ","lat":33.45,"lng":-112.07,"stalls":16},
+    {"id":"s06","name":"Sample: Albuquerque","city":"Albuquerque","state":"NM","lat":35.08,"lng":-106.65,"stalls":12},
+    {"id":"s07","name":"Sample: Denver","city":"Denver","state":"CO","lat":39.74,"lng":-104.99,"stalls":20},
+    {"id":"s08","name":"Sample: Salt Lake City","city":"Salt Lake City","state":"UT","lat":40.76,"lng":-111.89,"stalls":16},
+    {"id":"s09","name":"Sample: Portland","city":"Portland","state":"OR","lat":45.52,"lng":-122.68,"stalls":16},
+    {"id":"s10","name":"Sample: Seattle","city":"Seattle","state":"WA","lat":47.61,"lng":-122.33,"stalls":20},
+    {"id":"s11","name":"Sample: Dallas","city":"Dallas","state":"TX","lat":32.78,"lng":-96.8,"stalls":24},
+    {"id":"s12","name":"Sample: Austin","city":"Austin","state":"TX","lat":30.27,"lng":-97.74,"stalls":20},
+    {"id":"s13","name":"Sample: Kansas City","city":"Kansas City","state":"MO","lat":39.1,"lng":-94.58,"stalls":12},
+    {"id":"s14","name":"Sample: Chicago","city":"Chicago","state":"IL","lat":41.88,"lng":-87.63,"stalls":28},
+    {"id":"s15","name":"Sample: Nashville","city":"Nashville","state":"TN","lat":36.16,"lng":-86.78,"stalls":16},
+    {"id":"s16","name":"Sample: Atlanta","city":"Atlanta","state":"GA","lat":33.75,"lng":-84.39,"stalls":24},
+    {"id":"s17","name":"Sample: Orlando","city":"Orlando","state":"FL","lat":28.54,"lng":-81.38,"stalls":30},
+    {"id":"s18","name":"Sample: Charlotte","city":"Charlotte","state":"NC","lat":35.23,"lng":-80.84,"stalls":16},
+    {"id":"s19","name":"Sample: Washington DC","city":"Washington","state":"DC","lat":38.91,"lng":-77.04,"stalls":12},
+    {"id":"s20","name":"Sample: New York","city":"New York","state":"NY","lat":40.71,"lng":-74.01,"stalls":12}
+  ]
+}

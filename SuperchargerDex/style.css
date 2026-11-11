@@ -1,0 +1,26 @@
+:root{--bg:#f6f7f9;--fg:#15181d;--muted:#667085;--card:#fff;--line:#e3e6ea;--accent:#d92d20;--ok:#12805c}
+@media (prefers-color-scheme:dark){:root{--bg:#101215;--fg:#eceef1;--muted:#98a2b3;--card:#1a1d22;--line:#2a2e35;--accent:#f97066;--ok:#4cc9a0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,sans-serif;display:flex;flex-direction:column;height:100dvh}
+header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--card)}
+h1{font-size:1.1rem;margin:0}h2{font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 8px}
+#progress{display:flex;gap:8px;align-items:center;font-size:.9rem}
+.bar{width:90px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+#fill{height:100%;width:0;background:var(--ok);transition:width .3s}
+#notice{padding:8px 16px;background:#fef0c7;color:#7a2e0e;font-size:.85rem}
+main{flex:1;display:flex;min-height:0}
+#map{flex:1;min-height:0}
+aside{width:320px;overflow:auto;padding:12px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.muted{color:var(--muted);margin:0;font-size:.9rem}
+.chip{display:inline-block;margin:2px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);font-size:.8rem}
+.chip.done{background:var(--ok);color:#fff;border-color:var(--ok)}
+.badge{display:flex;gap:8px;align-items:center;padding:4px 0;opacity:.4}.badge.on{opacity:1}
+button,textarea{font:inherit}
+button.primary{width:100%;padding:10px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+button.primary.visited{background:var(--ok)}
+button.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+textarea{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);color:var(--fg)}
+.pin{width:16px;height:16px;border-radius:50%;background:#98a2b3;border:2px solid #fff;box-shadow:0 0 0 1px #0004}
+.pin.visited{background:var(--ok)}
+@media (max-width:700px){main{flex-direction:column}#map{flex:none;height:50%}aside{width:auto;flex:1;border-left:0;border-top:1px solid var(--line)}}

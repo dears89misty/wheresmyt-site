@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperchargerDex</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>⚡ SuperchargerDex</h1>
+  <div id="progress"><span id="count">0 / 0</span> <div class="bar"><div id="fill"></div></div></div>
+</header>
+<div id="notice" hidden></div>
+<main>
+  <div id="map"></div>
+  <aside>
+    <section id="detail"><p class="muted">Tap a station on the map.</p></section>
+    <section><h2>States</h2><div id="states"></div></section>
+    <section><h2>Badges</h2><div id="badges"></div></section>
+    <section><button id="reset" class="link">Reset my data</button></section>
+  </aside>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
